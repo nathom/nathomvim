@@ -3,16 +3,16 @@
   plugins.treesitter = {
     enable = true;
     settings = {
-      indent.enable = true;
+      indent.enable = false;
       highlight.enable = true;
     };
     folding = false;
-    nixvimInjections = true;
-    grammarPackages = pkgs.vimPlugins.nvim-treesitter.allGrammars;
+    nixvimInjections = false;
+    grammarPackages = [ ];
   };
 
   plugins.treesitter-textobjects = {
-    enable = false;
+    enable = true;
     select = {
       enable = true;
       lookahead = true;
