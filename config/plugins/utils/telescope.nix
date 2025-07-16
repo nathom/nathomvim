@@ -6,7 +6,7 @@
         enable = true;
       };
       fzf-native = {
-        enable = true;
+        enable = false;
       };
     };
     settings = {
