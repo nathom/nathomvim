@@ -1,4 +1,4 @@
-# nathomvim
+# n(athom)vim
 
 A pure neovim config.
 
