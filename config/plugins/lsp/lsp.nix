@@ -5,7 +5,7 @@
       enable = true;
     };
     lsp-format = {
-      enable = true;
+      enable = false;
     };
     helm = {
       enable = true;
@@ -25,8 +25,7 @@
         };
         hls = {
           enable = true;
-          # use the one from nix env
-          installGhc = false;
+          installGhc = true;
         };
         nil_ls = {
           enable = true;
