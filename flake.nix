@@ -144,32 +144,9 @@
               lua
               python
               rust
-              (
-                pkgs.tree-sitter.buildGrammar {
-                  language = "haskell";
-                  version = "0.1.0-latest";
-                  src = pkgs.fetchFromGitHub {
-                    owner = "tree-sitter";
-                    repo = "tree-sitter-haskell";
-                    rev = "0975ef72fc3c47b530309ca93937d7d143523628";
-                    hash = "sha256-0wmdbXHZbHkv4pTrB1fCbExx9E83l+zaocGa+SvQsZQ=";
-                  };
-                  meta.homepage = "https://github.com/tree-sitter/tree-sitter-haskell";
-                }
-              )
+              haskell
             ]
           ))
-          (pkgs.vimUtils.buildVimPlugin {
-          name = "diffstatus";
-          src = pkgs.fetchFromGitHub {
-              owner = "nathom";
-              repo = "diffstatus.nvim";
-              rev = "d4850f22233b772faa24c1f2110f2318805a6aa7";
-              hash = "sha256-A/cD5eNYmF9DCNiAjASHBB/SvDTYwaNVmQD/p5u0Y6o=";
-          };
-          doCheck = false;
-          dependencies = [];
-          })
         ];
         kickstart-debug = [
           nvim-dap
