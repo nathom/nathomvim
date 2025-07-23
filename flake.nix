@@ -146,7 +146,6 @@
               lua
               python
               rust
-              haskell
             ]
           ))
         ];
