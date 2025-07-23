@@ -18,7 +18,7 @@
 # each section is tagged with its relevant help section.
 
 {
-  description = "A Lua-natic's neovim flake, with extra cats! nixCats!";
+  description = "the nathomvim config";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -116,7 +116,9 @@
         general = [
           vim-sleuth
           lazy-nvim
+          which-key-nvim
           comment-nvim
+          oil-nvim
           gitsigns-nvim
           telescope-nvim
           telescope-fzf-native-nvim

@@ -293,7 +293,16 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 			{ "W", mode = "o" },
 		},
 	},
-
+	{
+		"stevearc/oil.nvim",
+		opts = {},
+		config = function()
+			require("oil").setup()
+		end,
+		keys = { { "-", "<CMD>Oil<CR>", mode = { "n" }, desc = "Open parent directory" } },
+		-- Optional dependencies
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`. This is equivalent to the following Lua:
 	--    require('gitsigns').setup({ ... })
