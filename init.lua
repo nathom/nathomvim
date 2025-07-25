@@ -977,6 +977,9 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					{ name = "luasnip" },
 					{ name = "path" },
 				},
+				performance = {
+					max_view_entries = 12,
+				},
 			})
 		end,
 	},
