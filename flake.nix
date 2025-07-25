@@ -80,6 +80,7 @@
           stdenv.cc.cc
           nix-doc
           lua-language-server
+          rust-analyzer
           nixd
           ruff
           stylua
