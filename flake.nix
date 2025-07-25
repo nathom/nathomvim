@@ -81,6 +81,7 @@
           nix-doc
           lua-language-server
           rust-analyzer
+          ty
           nixd
           ruff
           stylua
