@@ -97,6 +97,7 @@
         general = [
           vim-sleuth
           lazy-nvim
+          vim-cool
           which-key-nvim
           comment-nvim
           oil-nvim

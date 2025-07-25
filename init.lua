@@ -319,6 +319,10 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 		},
 	},
 	{
+		"romainl/vim-cool",
+		keys = { "/", "?", "*", "#" },
+	},
+	{
 		"stevearc/oil.nvim",
 		opts = {},
 		config = function()
