@@ -94,6 +94,31 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- so that it doesnt throw an error if you didnt install via nix.
 -- usage of both this setup and the nixCats command is optional,
 -- but it is very useful for passing info from nix to lua so you will likely use it at least once.
+
+-- Disable some built-in plugins we don't want
+local disabled_built_ins = {
+	"gzip",
+	"man",
+	"matchit",
+	"matchparen",
+	"shada_plugin",
+	"tarPlugin",
+	"tar",
+	"zipPlugin",
+	"zip",
+	"netrwPlugin",
+	"2html_plugin",
+	"remote_plugins",
+}
+
+for _, plugin in ipairs(disabled_built_ins) do
+	vim.g["loaded_" .. plugin] = 1
+end
+
+-- Speed up startup time
+-- Doesn't work with vim.opt for some reason
+vim.cmd([[set shada="NONE"]])
+
 require("nixCatsUtils").setup({
 	non_nix_value = true,
 })
@@ -897,9 +922,9 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 				-- No, but seriously. Please read `:help ins-completion`, it is really good!
 				mapping = cmp.mapping.preset.insert({
 					-- Select the [n]ext item
-					["<C-n>"] = cmp.mapping.select_next_item(),
+					["<Down>"] = cmp.mapping.select_next_item(),
 					-- Select the [p]revious item
-					["<C-p>"] = cmp.mapping.select_prev_item(),
+					["<Up>"] = cmp.mapping.select_prev_item(),
 
 					-- Scroll the documentation window [b]ack / [f]orward
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
@@ -908,7 +933,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					-- Accept ([y]es) the completion.
 					--  This will auto-import if your LSP supports it.
 					--  This will expand snippets if the LSP sent a snippet.
-					["<C-y>"] = cmp.mapping.confirm({ select = true }),
+					["<Right>"] = cmp.mapping.confirm({ select = true }),
 
 					-- If you prefer more traditional completion keymaps,
 					-- you can uncomment the following lines
