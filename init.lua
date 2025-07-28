@@ -499,6 +499,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					},
 					live_grep = {
 						theme = "dropdown",
+						additional_args = { "-j1" },
 					},
 				},
 				extensions = {
