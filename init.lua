@@ -147,6 +147,7 @@ vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
+vim.opt.swapfile = false
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
@@ -469,11 +470,20 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 				-- You can put your default mappings / updates / etc. in here
 				--  All the info you're looking for is in `:help telescope.setup()`
 				--
-				-- defaults = {
-				--   mappings = {
-				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-				--   },
-				-- },
+				defaults = {
+					scroll_strategy = "cycle",
+					vimgrep_arguments = {
+						"rg",
+						"--color=never",
+						"--no-heading",
+						"--with-filename",
+						"--line-number",
+						"--column",
+						"--smart-case",
+						"--hidden",
+						-- "-g '!.git'",
+					},
+				},
 				pickers = {
 					find_files = {
 						theme = "dropdown",
