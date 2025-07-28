@@ -306,6 +306,20 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 	-- NOTE: nixCats: nix downloads it with a different file name.
 	-- tell lazy about that.
 	{ "numToStr/Comment.nvim", name = "comment.nvim", opts = {} },
+	{
+		"nathom/delphi.nvim",
+		opts = {
+			chat = { system_prompt = "You are a helpful assistant.", default_model = "gpt_4o" },
+			refactor = { default_model = "gpt_4o" },
+			models = {
+				gpt_4o = {
+					base_url = "https://alfred.itools.anduril.dev/raw", -- SET THIS UP
+					api_key_env_var = "ALFRED_API_KEY", -- SET THIS UP
+					model_name = "gpt-4o",
+				},
+			},
+		},
+	},
 
 	{
 		"chaoren/vim-wordmotion",
