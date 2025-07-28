@@ -105,6 +105,7 @@
           oil-nvim
           gitsigns-nvim
           telescope-nvim
+          nvim-surround
           telescope-fzf-native-nvim
           telescope-ui-select-nvim
           nvim-web-devicons
