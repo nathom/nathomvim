@@ -310,13 +310,18 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 	{
 		"nathom/delphi.nvim",
 		opts = {
-			chat = { system_prompt = "You are a helpful assistant.", default_model = "gpt_4o" },
-			refactor = { default_model = "gpt_4o" },
+			chat = { system_prompt = "You are a helpful assistant.", default_model = "claude_35" },
+			refactor = { default_model = "claude_35" },
 			models = {
 				gpt_4o = {
 					base_url = "https://alfred.itools.anduril.dev/raw", -- SET THIS UP
 					api_key_env_var = "ALFRED_API_KEY", -- SET THIS UP
 					model_name = "gpt-4o",
+				},
+				claude_35 = {
+					base_url = "https://alfred.itools.anduril.dev/raw", -- SET THIS UP
+					api_key_env_var = "ALFRED_API_KEY", -- SET THIS UP
+					model_name = "anthropic.claude-3-5-sonnet-20240620-v1:0",
 				},
 			},
 		},
