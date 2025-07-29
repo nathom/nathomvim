@@ -485,7 +485,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 						"--column",
 						"--smart-case",
 						"--hidden",
-						-- "-g '!.git'",
+						"-g '!.git'",
 					},
 				},
 				pickers = {
@@ -499,7 +499,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					},
 					live_grep = {
 						theme = "dropdown",
-						additional_args = { "-j1" },
+						additional_args = { "-j1", "-g '!.git'" },
 					},
 				},
 				extensions = {
