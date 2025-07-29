@@ -487,17 +487,17 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 				--
 				defaults = {
 					scroll_strategy = "cycle",
-					vimgrep_arguments = {
-						"rg",
-						"--color=never",
-						"--no-heading",
-						"--with-filename",
-						"--line-number",
-						"--column",
-						"--smart-case",
-						"--hidden",
-						"-g '!.git'",
-					},
+					-- vimgrep_arguments = {
+					-- 	"rg",
+					-- 	"--color=never",
+					-- 	"--no-heading",
+					-- 	"--with-filename",
+					-- 	"--line-number",
+					-- 	"--column",
+					-- 	"--smart-case",
+					-- 	"--hidden",
+					-- 	"-g '!.git'",
+					-- },
 				},
 				pickers = {
 					find_files = {
@@ -510,7 +510,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					},
 					live_grep = {
 						theme = "dropdown",
-						additional_args = { "-j1", "-g '!.git'" },
+						additional_args = { "-j1" },
 					},
 				},
 				extensions = {
