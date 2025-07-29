@@ -310,27 +310,28 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 	{
 		"nathom/delphi.nvim",
 		opts = {
-			chat = { system_prompt = "You are a helpful assistant.", default_model = "kimi_k2" },
+			allow_env_var_config = true,
+			chat = { default_model = "kimi_k2" },
 			refactor = { default_model = "kimi_k2" },
 			models = {
-				gpt_4o = {
-					base_url = "https://alfred.itools.anduril.dev/raw", -- SET THIS UP
-					api_key_env_var = "ALFRED_API_KEY", -- SET THIS UP
+				anduril_gpt_4o = {
+					base_url = "https://alfred.itools.anduril.dev/raw",
+					api_key_env_var = "ALFRED_API_KEY",
 					model_name = "gpt-4o",
 				},
-				claude_35 = {
-					base_url = "https://alfred.itools.anduril.dev/raw", -- SET THIS UP
-					api_key_env_var = "ALFRED_API_KEY", -- SET THIS UP
+				anduril_claude_35 = {
+					base_url = "https://alfred.itools.anduril.dev/raw",
+					api_key_env_var = "ALFRED_API_KEY",
 					model_name = "anthropic.claude-3-5-sonnet-20240620-v1:0",
 				},
 				gemini_flash = {
-					base_url = "https://openrouter.ai/api/v1", -- SET THIS UP
-					api_key_env_var = "OPENROUTER_API_KEY", -- SET THIS UP
+					base_url = "https://openrouter.ai/api/v1",
+					api_key_env_var = "OPENROUTER_API_KEY",
 					model_name = "google/gemini-2.5-flash",
 				},
 				kimi_k2 = {
-					base_url = "https://openrouter.ai/api/v1", -- SET THIS UP
-					api_key_env_var = "OPENROUTER_API_KEY", -- SET THIS UP
+					base_url = "https://openrouter.ai/api/v1",
+					api_key_env_var = "OPENROUTER_API_KEY",
 					model_name = "moonshotai/kimi-k2",
 				},
 			},
