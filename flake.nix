@@ -98,6 +98,7 @@
       startupPlugins = with pkgs.vimPlugins; {
         general = [
           vim-sleuth
+          vim-sayonara
           lazy-nvim
           vim-cool
           which-key-nvim
