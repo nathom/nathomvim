@@ -220,6 +220,7 @@ vim.cmd([[command! Q qa!]])
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("n", "<localleader>q", "<cmd>Sayonara<cr>")
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -293,7 +294,10 @@ local lazyOptions = {
 require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", "lazy.nvim" }), {
 	-- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
-
+	{
+		"mhinz/vim-sayonara",
+		cmd = "Sayonara",
+	},
 	-- NOTE: Plugins can also be added by using a table,
 	-- with the first argument being the link and the following
 	-- keys can be used to configure plugin behavior/loading/etc.
@@ -312,13 +316,14 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 		opts = {
 			chat = { default_model = "kimi_k2" },
 			rewrite = { default_model = "kimi_k2" },
+			allow_env_var_config = true,
 			models = {
-				gpt_4o = {
+				anduril_gpt_4o = {
 					base_url = "https://alfred.itools.anduril.dev/raw",
 					api_key_env_var = "ALFRED_API_KEY",
 					model_name = "gpt-4o",
 				},
-				claude_35 = {
+				anduril_claude_35 = {
 					base_url = "https://alfred.itools.anduril.dev/raw",
 					api_key_env_var = "ALFRED_API_KEY",
 					model_name = "anthropic.claude-3-5-sonnet-20240620-v1:0",
@@ -501,17 +506,17 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 				--
 				defaults = {
 					scroll_strategy = "cycle",
-					vimgrep_arguments = {
-						"rg",
-						"--color=never",
-						"--no-heading",
-						"--with-filename",
-						"--line-number",
-						"--column",
-						"--smart-case",
-						"--hidden",
-						-- "-g '!.git'",
-					},
+					-- vimgrep_arguments = {
+					-- 	"rg",
+					-- 	"--color=never",
+					-- 	"--no-heading",
+					-- 	"--with-filename",
+					-- 	"--line-number",
+					-- 	"--column",
+					-- 	"--smart-case",
+					-- 	"--hidden",
+					-- 	"-g '!.git'",
+					-- },
 				},
 				pickers = {
 					find_files = {
