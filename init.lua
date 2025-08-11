@@ -785,7 +785,7 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			-- NOTE: nixCats: there is help in nixCats for lsps at `:h nixCats.LSPs` and also `:h nixCats.luaUtils`
 			local servers = {}
-			servers.hls = {}
+			-- servers.hls = {} -- this has major performance issues :(
 			-- servers.clangd = {},
 			-- servers.gopls = {},
 			-- servers.pyright = {}
