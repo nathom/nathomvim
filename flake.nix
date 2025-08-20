@@ -109,6 +109,7 @@
           nvim-surround
           telescope-fzf-native-nvim
           telescope-ui-select-nvim
+          telescope-live-grep-args-nvim
           nvim-web-devicons
           plenary-nvim
           nvim-lspconfig
