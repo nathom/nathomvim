@@ -85,6 +85,7 @@
           nixd
           ruff
           stylua
+          lazygit
         ];
         kickstart-debug = [
           delve
@@ -103,6 +104,7 @@
           vim-cool
           which-key-nvim
           comment-nvim
+          lazygit-nvim
           oil-nvim
           gitsigns-nvim
           telescope-nvim
