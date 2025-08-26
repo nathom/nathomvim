@@ -240,6 +240,15 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 	},
 	{
 		"nathom/delphi.nvim",
+		keys = {
+			{ "<leader><cr>", "<Plug>(DelphiChatSend)", desc = "Delphi: send chat" },
+			{ "<C-i>", "<Plug>(DelphiRewriteSelection)", mode = { "x", "s" }, desc = "Delphi: rewrite selection" },
+			{ "<C-i>", "<Plug>(DelphiInsertAtCursor)", mode = { "n", "i" }, desc = "Delphi: insert at cursor" },
+			{ "<leader>a", "<Plug>(DelphiRewriteAccept)", desc = "Delphi: accept rewrite" },
+			{ "<leader>R", "<Plug>(DelphiRewriteReject)", desc = "Delphi: reject rewrite" },
+		},
+		cmd = { "Chat" },
+		dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
 		opts = {
 			chat = { default_model = "kimi_k2" },
 			rewrite = { default_model = "kimi_k2" },
