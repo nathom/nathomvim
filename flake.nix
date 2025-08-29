@@ -5,6 +5,12 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
 
+    # Pin the upstream grammar repo via flake input (no flake; lock pins commit)
+    tree-sitter-haskell = {
+      url = "github:tree-sitter/tree-sitter-haskell";
+      flake = false;
+    };
+
     # neovim-nightly-overlay = {
     #   url = "github:nix-community/neovim-nightly-overlay";
     # };
@@ -43,12 +49,24 @@
     # this allows you to use ${pkgs.system} whenever you want in those sections
     # without fear.
 
+    # Override tree-sitter-haskell to a newer upstream commit via overlay.
+    # Using the flake input above keeps it pinned in flake.lock and hermetic.
+    overlayTsHs = final: prev: {
+      tree-sitter-grammars = prev.tree-sitter-grammars // {
+        tree-sitter-haskell = prev.tree-sitter.buildGrammar {
+          language = "haskell";
+          src = inputs.tree-sitter-haskell; # queries picked up automatically
+        };
+      };
+    };
+
     dependencyOverlays = /* (import ./overlays inputs) ++ */ [
       # This overlay grabs all the inputs named in the format
       # `plugins-<pluginName>`
       # Once we add this overlay to our nixpkgs, we are able to
       # use `pkgs.neovimPlugins`, which is a set of our plugins.
       (utils.standardPluginOverlay inputs)
+      overlayTsHs
       # add any other flake overlays here.
 
       # when other people mess up their overlays by wrapping them with system,
@@ -133,6 +151,7 @@
               lua
               python
               rust
+              haskell
             ]
           ))
         ];
