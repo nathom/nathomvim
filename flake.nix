@@ -127,6 +127,7 @@
           gruvbox-nvim
           todo-comments-nvim
           mini-nvim
+          vimtex
           # nvim-treesitter.withAllGrammars
           # This is for if you only want some of the grammars
           (nvim-treesitter.withPlugins (
