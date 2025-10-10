@@ -293,6 +293,24 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 		},
 	},
 	{
+		"iurimateus/luasnip-latex-snippets.nvim",
+		config = function()
+			require("luasnip-latex-snippets").setup({
+				use_treesitter = false,
+				allow_on_markdown = true,
+			})
+			local luasnip = require("luasnip")
+			luasnip.config.setup({
+				enable_autosnippets = true,
+				update_events = "TextChanged,TextChangedI",
+			})
+		end,
+		requires = { "L3MON4D3/LuaSnip" },
+		ft = "tex",
+		after = "LuaSnip",
+		enabled = true,
+	},
+	{
 		"lervag/vimtex",
 		init = function()
 			local opt = require("utils").opt
@@ -955,7 +973,10 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 			-- See `:help cmp`
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
-			luasnip.config.setup({})
+			luasnip.config.setup({
+				enable_autosnippets = true,
+				update_events = "TextChanged,TextChangedI",
+			})
 
 			cmp.setup({
 				snippet = {
