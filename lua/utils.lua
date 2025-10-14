@@ -4,32 +4,32 @@ local o_s = vim.o
 
 local M = {}
 
-M.HOME = os.getenv 'HOME'
+M.HOME = os.getenv("HOME")
 -- legacy
 M.map = vim.keymap.set
 
 function M.opt(o, v, scopes)
-  scopes = scopes or { o_s }
-  for _, s in ipairs(scopes) do
-    s[o] = v
-  end
+	scopes = scopes or { o_s }
+	for _, s in ipairs(scopes) do
+		s[o] = v
+	end
 end
 
 -- From gruvbox8 colorscheme
 M.colors = {
-  -- black = "#282828",
-  black = 'Background',
-  red = '#cc241d',
-  green = '#98971a',
-  yellow = '#d79921',
-  blue = '#458588',
-  magenta = '#b16286',
-  cyan = '#689d6a',
-  gray = '#928374',
-  darkgray = '#3c3836',
-  pink = '#fb4934',
-  white = '#ebdbb2',
-  orange = '#fe8019',
+	-- black = "#282828",
+	black = "Background",
+	red = "#cc241d",
+	green = "#98971a",
+	yellow = "#d79921",
+	blue = "#458588",
+	magenta = "#b16286",
+	cyan = "#689d6a",
+	gray = "#928374",
+	darkgray = "#3c3836",
+	pink = "#fb4934",
+	white = "#ebdbb2",
+	orange = "#fe8019",
 }
 
 -- For feline
@@ -39,34 +39,49 @@ M.colors.skyblue = M.colors.cyan
 M.colors.oceanblue = M.colors.blue
 M.colors.violet = M.colors.magenta
 
--- Requires rooter.nvim
 function M.is_in_repo(path)
-  return os.execute '[ -d .git ]' == 0
-  -- return os.capture("fd -H --max-depth 1 '^.git$'") ~= ""
+	path = path or vim.fn.getcwd()
+	local stat = vim.loop.fs_stat(path)
+	if not stat then
+		return false
+	end
+	if stat.type == "file" then
+		path = vim.fs.dirname(path)
+	end
+
+	local ok, handle = pcall(vim.system, { "git", "-C", path, "rev-parse", "--is-inside-work-tree" }, { text = true })
+	if not ok then
+		return false
+	end
+	local result = handle:wait()
+	if result.code ~= 0 or not result.stdout then
+		return false
+	end
+	return vim.trim(result.stdout) == "true"
 end
 
 function M.bufext(bufn)
-  if bufn == nil then
-    bufn = 0
-  end
-  return vim.api.nvim_buf_get_name(bufn):match '.*%.(%w+)'
+	if bufn == nil then
+		bufn = 0
+	end
+	return vim.api.nvim_buf_get_name(bufn):match(".*%.(%w+)")
 end
 
 function M.sethl(group, fg, bg)
-  vim.cmd('hi ' .. group .. ' guifg=' .. fg .. ' guibg=' .. bg)
+	vim.cmd("hi " .. group .. " guifg=" .. fg .. " guibg=" .. bg)
 end
 
 function M.visual_selection_range()
-  local _, cerow, cecol, _ = unpack(vim.fn.getpos '.')
-  local _, csrow, cscol, _ = unpack(vim.fn.getpos 'v')
-  if csrow < cerow or (csrow == cerow and cscol <= cecol) then
-    return csrow - 1, cscol - 1, cerow - 1, cecol
-  else
-    return cerow - 1, cecol - 1, csrow - 1, cscol
-  end
+	local _, cerow, cecol, _ = unpack(vim.fn.getpos("."))
+	local _, csrow, cscol, _ = unpack(vim.fn.getpos("v"))
+	if csrow < cerow or (csrow == cerow and cscol <= cecol) then
+		return csrow - 1, cscol - 1, cerow - 1, cecol
+	else
+		return cerow - 1, cecol - 1, csrow - 1, cscol
+	end
 end
 function M.mason_path(exec_name)
-  return vim.fn.stdpath 'data' .. '/mason/bin/' .. exec_name
+	return vim.fn.stdpath("data") .. "/mason/bin/" .. exec_name
 end
 
 return M

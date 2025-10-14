@@ -539,14 +539,10 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 
 			-- See `:help telescope.builtin`
 			local builtin = require("telescope.builtin")
-			local in_repo = nil
 			local utils = require("utils")
 			local is_in_repo = utils.is_in_repo
 			local function run_telescope_command()
-				if in_repo == nil then
-					in_repo = is_in_repo()
-				end
-				if in_repo then
+				if is_in_repo() then
 					builtin.git_files()
 				else
 					builtin.find_files()
