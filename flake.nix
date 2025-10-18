@@ -82,6 +82,7 @@
           lua-language-server
           rust-analyzer
           ty
+          tex-fmt
           nixd
           ruff
           stylua
