@@ -157,6 +157,17 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
+vim.opt.autowriteall = true
+
+-- Write all modified real files when Neovim loses focus (e.g., you switch tmux panes)
+local grp = vim.api.nvim_create_augroup("AutosaveOnBlur", { clear = true })
+vim.api.nvim_create_autocmd("FocusLost", {
+	group = grp,
+	callback = function()
+		pcall(vim.cmd, "silent! wall") -- no noise on special buffers
+	end,
+})
+
 -- NOTE: nixCats: You might want to move the lazy-lock.json file
 local function getlockfilepath()
 	if require("nixCatsUtils").isNixCats and type(nixCats.settings.unwrappedCfgPath) == "string" then
