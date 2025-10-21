@@ -81,7 +81,8 @@
           nix-doc
           lua-language-server
           rust-analyzer
-          ty
+          # ty
+          pyright
           tex-fmt
           nixd
           ruff
