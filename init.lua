@@ -261,8 +261,8 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 		cmd = { "Chat" },
 		dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
 		opts = {
-			chat = { default_model = "kimi_k2" },
-			rewrite = { default_model = "kimi_k2" },
+			chat = { default_model = "grok4_fast" },
+			rewrite = { default_model = "grok4_fast" },
 			allow_env_var_config = true,
 			models = {
 				anduril_gpt_4o = {
@@ -279,6 +279,11 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
 					base_url = "https://openrouter.ai/api/v1",
 					api_key_env_var = "OPENROUTER_API_KEY",
 					model_name = "google/gemini-2.5-flash",
+				},
+				grok4_fast = {
+					base_url = "https://openrouter.ai/api/v1",
+					api_key_env_var = "OPENROUTER_API_KEY",
+					model_name = "x-ai/grok-4-fast",
 				},
 				claude_37 = {
 					base_url = "https://openrouter.ai/api/v1",
