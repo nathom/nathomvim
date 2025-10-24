@@ -17,7 +17,6 @@ end
 
 -- From gruvbox8 colorscheme
 M.colors = {
-	-- black = "#282828",
 	black = "Background",
 	red = "#cc241d",
 	green = "#98971a",

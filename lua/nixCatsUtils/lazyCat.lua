@@ -1,12 +1,5 @@
---[[
-  This directory is the luaUtils template.
-  You can choose what things from it that you would like to use.
-  And then delete the rest.
-  Everything in this directory is optional.
---]]
 
 local M = {}
--- NOTE: If you don't use lazy.nvim, you don't need this file.
 
 ---lazy.nvim wrapper
 ---@overload fun(nixLazyPath: string|nil, lazySpec: any, opts: table)
@@ -46,7 +39,6 @@ function M.setup(nixLazyPath, lazySpec, opts)
     local nixCats = require('nixCats')
     -- Else, its nix, so we wrap lazy with a few extra config options
     lazypath = nixLazyPath
-    -- and also we probably dont have to download lazy either
     if lazypath == nil then
       lazypath = regularLazyDownload()
     end
@@ -95,7 +87,6 @@ function M.setup(nixLazyPath, lazySpec, opts)
       }
     }
     lazyCFG = vim.tbl_deep_extend("force", lazyCFG or {}, newLazyOpts)
-    -- do the reset we disabled without removing important stuff
     local cfgdir = nixCats.configDir
     vim.opt.rtp = {
       cfgdir,
