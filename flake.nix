@@ -102,12 +102,12 @@
         general = [
           vim-sleuth
           vim-sayonara
+          snacks-nvim
           lazy-nvim
           vim-cool
           flash-nvim
           which-key-nvim
           comment-nvim
-          lazygit-nvim
           oil-nvim
           gitsigns-nvim
           telescope-nvim
@@ -243,6 +243,11 @@
           general = true;
           gitPlugins = true;
           customPlugins = true;
+          customCore = true;
+          customNavigation = true;
+          customLsp = true;
+          customLatex = true;
+          customAi = true;
           test = false;
 
           kickstart-autopairs = true;
