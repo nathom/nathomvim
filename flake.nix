@@ -104,6 +104,7 @@
           vim-sayonara
           lazy-nvim
           vim-cool
+          flash-nvim
           which-key-nvim
           comment-nvim
           lazygit-nvim
