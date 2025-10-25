@@ -156,6 +156,7 @@ return {
         })
       end
     end,
+    ft = { "lua", "python", "rust", "haskell", "nix" },
   },
   {
     "stevearc/conform.nvim",
