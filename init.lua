@@ -11,7 +11,6 @@ local disabled_built_ins = {
   "man",
   "matchit",
   "matchparen",
-  "shada_plugin",
   "tarPlugin",
   "tar",
   "zipPlugin",
@@ -24,10 +23,6 @@ local disabled_built_ins = {
 for _, plugin in ipairs(disabled_built_ins) do
   vim.g["loaded_" .. plugin] = 1
 end
-
--- Speed up startup time
--- Doesn't work with vim.opt for some reason
-vim.cmd([[set shada="NONE"]])
 
 require("nixCatsUtils").setup({
   non_nix_value = true,
