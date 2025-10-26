@@ -22,7 +22,6 @@ return {
   },
   {
     "folke/todo-comments.nvim",
-    event = "VimEnter",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
     enabled = enable("customCore", true),
@@ -141,11 +140,11 @@ return {
             ttl = 5 * 60,
             indent = 3,
           },
-          { section = "startup" },
+          { section = "startup", icon = "" },
         },
       },
       explorer = { enabled = true },
-      indent = { enabled = true },
+      indent = { enabled = true, animate = { enabled = false } },
       input = { enabled = true },
       notifier = {
         enabled = true,

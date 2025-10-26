@@ -146,8 +146,8 @@
         kickstart-debug = [
           nvim-dap
           nvim-dap-ui
-          nvim-dap-go
           nvim-nio
+          nvim-dap-virtual-text
         ];
         kickstart-indent_line = [
           indent-blankline-nvim
@@ -157,15 +157,6 @@
         ];
         kickstart-autopairs = [
           nvim-autopairs
-        ];
-        kickstart-neo-tree = [
-          neo-tree-nvim
-          nui-nvim
-          # nixCats will filter out duplicate packages
-          # so you can put dependencies with stuff even if they're
-          # also somewhere else
-          nvim-web-devicons
-          plenary-nvim
         ];
       };
 
@@ -252,10 +243,8 @@
           test = false;
 
           kickstart-autopairs = true;
-          kickstart-neo-tree = false;
-          kickstart-debug = false;
+          kickstart-debug = true;
           kickstart-lint = false;
-          kickstart-indent_line = false;
 
           # this kickstart extra didnt require any extra plugins
           # so it doesnt have a category above.

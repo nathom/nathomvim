@@ -143,18 +143,12 @@ local lazyOptions = {
 -- NOTE: nixCats: this the lazy wrapper. Use it like require('lazy').setup() but with an extra
 -- argument, the path to lazy.nvim as downloaded by nix, or nil, before the normal arguments.
 require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", "lazy.nvim" }), {
-  { import = "custom.plugins.core" },
-  { import = "custom.plugins.navigation" },
-  { import = "custom.plugins.git" },
-  { import = "custom.plugins.development" },
-  { import = "custom.plugins.latex" },
-  { import = "custom.plugins.ai" },
-
-  -- This is because within them, we used nixCats to check if it should be loaded!
-  require("kickstart.plugins.debug"),
-  require("kickstart.plugins.indent_line"),
-  require("kickstart.plugins.lint"),
-  require("kickstart.plugins.autopairs"),
-  require("kickstart.plugins.neo-tree"),
-  require("kickstart.plugins.gitsigns"), -- adds gitsigns recommend keymaps
+  { import = "plugins.core" },
+  { import = "plugins.navigation" },
+  { import = "plugins.git" },
+  { import = "plugins.development" },
+  { import = "plugins.latex" },
+  { import = "plugins.ai" },
+  { import = "plugins.debug" },
+  { import = "plugins.autopairs" },
 }, lazyOptions)
