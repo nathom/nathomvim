@@ -66,6 +66,30 @@ return {
     vim.keymap.set("n", "<leader>dr", dap.restart, { desc = "Debug: Restart" })
     vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "Debug: Run Last" })
 
+    dap.listeners.after.event_initialized["python_exception_breakpoints"] = function(session)
+      if session.config.type == "python" then
+        dap.set_exception_breakpoints({ "uncaught" })
+      end
+    end
+
+    local checked_debugpy = {}
+    local function ensure_debugpy(python)
+      if checked_debugpy[python] then
+        return
+      end
+      vim.fn.system({ python, "-c", "import debugpy" })
+      if vim.v.shell_error ~= 0 then
+        error(
+          ("debugpy is not installed in the virtualenv (%s).\nInstall it with `%s -m pip install debugpy`."):format(
+            python,
+            python
+          ),
+          0
+        )
+      end
+      checked_debugpy[python] = true
+    end
+
     dapui.setup()
 
     dap.listeners.after.event_initialized["dapui_config"] = dapui.open
@@ -75,6 +99,7 @@ return {
     dap.adapters.python = function(cb)
       local venv_python = get_venv_python()
       if venv_python then
+        ensure_debugpy(venv_python)
         cb({
           type = "executable",
           command = venv_python,
