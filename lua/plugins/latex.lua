@@ -8,19 +8,14 @@ return {
         use_treesitter = false,
         allow_on_markdown = true,
       })
-      local luasnip = require("luasnip")
-      luasnip.config.setup({
-        enable_autosnippets = true,
-        update_events = "TextChanged,TextChangedI",
-      })
     end,
-    requires = { "L3MON4D3/LuaSnip" },
+    dependencies = { "L3MON4D3/LuaSnip" },
     ft = "tex",
-    after = "LuaSnip",
     enabled = enable("customLatex", true),
   },
   {
     "lervag/vimtex",
+    ft = { "tex", "bib" },
     init = function()
       local opt = require("utils").opt
       vim.g.tex_flavor = "latex"

@@ -9,6 +9,7 @@ return {
     "numToStr/Comment.nvim",
     name = "comment.nvim",
     opts = {},
+    event = "VeryLazy",
     enabled = enable("customCore", true),
   },
   {

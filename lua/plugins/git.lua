@@ -1,10 +1,8 @@
--- Adds git related signs to the gutter, as well as utilities for managing changes
-
 return {
   {
     "lewis6991/gitsigns.nvim",
-    -- NOTE: nixCats: return true only if category is enabled, else false
     enabled = require("nixCatsUtils").enableForCategory("kickstart-gitsigns"),
+    event = "VeryLazy",
     opts = {
       on_attach = function(bufnr)
         local gitsigns = require("gitsigns")
