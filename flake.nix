@@ -77,11 +77,13 @@
           universal-ctags
           ripgrep
           fd
+          git
           dwt1-shell-color-scripts
           stdenv.cc.cc
           nix-doc
           lua-language-server
           rust-analyzer
+          bash
           # ty
           pyright
           tex-fmt
@@ -178,7 +180,21 @@
       # environmentVariables:
       # this section is for environmentVariables that should be available
       # at RUN TIME for plugins. Will be available to path within neovim terminal
-      environmentVariables = {
+      environmentVariables = let
+        localeArchive =
+          if pkgs.stdenv.hostPlatform.isLinux then
+            "${pkgs.glibcLocales}/lib/locale/locale-archive"
+          else
+            null;
+      in {
+        general =
+          {
+            LANG = "en_US.UTF-8";
+            LC_ALL = "en_US.UTF-8";
+          }
+          // pkgs.lib.optionalAttrs (localeArchive != null) {
+            LOCALE_ARCHIVE = localeArchive;
+          };
       };
 
       # If you know what these are, you can provide custom ones by category here.
