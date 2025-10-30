@@ -15,9 +15,24 @@ return {
   {
     "ellisonleao/gruvbox.nvim",
     priority = 1000,
+    lazy = false,
     init = function()
-      vim.cmd.colorscheme("gruvbox")
       vim.cmd.hi("Comment gui=none")
+    end,
+    config = function()
+      vim.cmd.colorscheme("gruvbox")
+      local function set_float_highlights()
+        local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+        local bg = normal.bg or 0x282828
+        vim.api.nvim_set_hl(0, "NormalFloat", { link = "SnacksPicker" })
+        vim.api.nvim_set_hl(0, "FloatBorder", { link = "SnacksPickerBorder" })
+        vim.api.nvim_set_hl(0, "Directory", { link = "SnacksPickerDir" })
+      end
+      set_float_highlights()
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "gruvbox",
+        callback = set_float_highlights,
+      })
     end,
     enabled = enable("customCore", true),
   },
