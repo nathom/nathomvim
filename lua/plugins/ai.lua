@@ -2,16 +2,92 @@ local enable = require("nixCatsUtils").enableForCategory
 
 return {
   {
-    "nathom/delphi.nvim",
+    dir = "~/delphi.nvim",
     keys = {
-      { "<leader><cr>", "<Plug>(DelphiChatSend)", desc = "Delphi: send chat" },
-      { "<C-i>", "<Plug>(DelphiRewriteSelection)", mode = { "x", "s" }, desc = "Delphi: rewrite selection" },
-      { "<C-i>", "<Plug>(DelphiInsertAtCursor)", mode = { "n", "i" }, desc = "Delphi: insert at cursor" },
-      { "<leader>a", "<Plug>(DelphiRewriteAccept)", desc = "Delphi: accept rewrite" },
-      { "<leader>R", "<Plug>(DelphiRewriteReject)", desc = "Delphi: reject rewrite" },
+      {
+        "<leader>dd",
+        function()
+          require("delphi").chat()
+        end,
+        desc = "Delphi: open chat",
+      },
+      {
+        "<leader>df",
+        function()
+          require("delphi").chat_open_float()
+        end,
+        desc = "Delphi: open floating chat",
+      },
+      {
+        "<leader>ds",
+        function()
+          require("delphi").open_chats_picker()
+        end,
+        desc = "Delphi: chats picker",
+      },
+      {
+        "<leader>dg",
+        function()
+          require("delphi").grep_chats()
+        end,
+        desc = "Delphi: grep chats",
+      },
+      {
+        "<leader>dr",
+        function()
+          require("delphi").rewrite_selection()
+        end,
+        mode = { "x", "s" },
+        desc = "Delphi: rewrite selection",
+      },
+      {
+        "<leader>dr",
+        function()
+          require("delphi").rewrite_at_cursor()
+        end,
+        mode = "n",
+        desc = "Delphi: insert at cursor",
+      },
+      {
+        "<C-i>",
+        function()
+          require("delphi").rewrite_at_cursor()
+        end,
+        mode = "i",
+        desc = "Delphi: insert at cursor",
+      },
+      {
+        "<leader>de",
+        function()
+          require("delphi").explain_selection()
+        end,
+        mode = { "x", "s" },
+        desc = "Delphi: explain selection",
+      },
+      {
+        "<leader>de",
+        function()
+          require("delphi").explain_at_cursor()
+        end,
+        mode = "n",
+        desc = "Delphi: explain at cursor",
+      },
+      {
+        "<leader>da",
+        function()
+          require("delphi").rewrite_accept()
+        end,
+        desc = "Delphi: accept rewrite",
+      },
+      {
+        "<leader>dx",
+        function()
+          require("delphi").rewrite_reject()
+        end,
+        desc = "Delphi: reject rewrite",
+      },
     },
-    cmd = { "Chat" },
-    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
+    dependencies = { "folke/snacks.nvim" },
     opts = {
       chat = { default_model = "grok4_fast" },
       rewrite = { default_model = "grok4_fast" },
