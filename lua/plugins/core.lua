@@ -21,16 +21,6 @@ return {
     end,
     config = function()
       vim.cmd.colorscheme("gruvbox")
-      local function set_float_highlights()
-        vim.api.nvim_set_hl(0, "NormalFloat", { link = "SnacksPicker" })
-        vim.api.nvim_set_hl(0, "FloatBorder", { link = "SnacksPickerBorder" })
-        vim.api.nvim_set_hl(0, "Directory", { link = "SnacksPickerDir" })
-      end
-      set_float_highlights()
-      vim.api.nvim_create_autocmd("ColorScheme", {
-        pattern = "gruvbox",
-        callback = set_float_highlights,
-      })
     end,
     enabled = enable("customCore", true),
   },

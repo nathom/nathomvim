@@ -5,7 +5,6 @@
 |_| |_|\__,_|\__|_| |_|\___/|_| |_| |_|\_/ |_|_| |_| |_|
 --]]
 
-vim.notify("Hello from new version")
 -- Disable some built-in plugins we don't want
 local disabled_built_ins = {
   "gzip",
