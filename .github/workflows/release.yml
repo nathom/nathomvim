@@ -10,7 +10,10 @@ permissions:
   contents: write
 
 env:
-  NIX_CONFIG: experimental-features = nix-command flakes
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+    keep-outputs = true
+    keep-derivations = true
 
 jobs:
   bundle:
