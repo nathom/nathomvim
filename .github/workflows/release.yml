@@ -28,10 +28,6 @@ jobs:
             runner: ubuntu-24.04-arm
             asset_suffix: linux-aarch64
             artifact: bundle-linux-aarch64
-          - pretty_name: macOS aarch64
-            runner: macos-14
-            asset_suffix: darwin-aarch64
-            artifact: bundle-darwin-aarch64
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
