@@ -54,6 +54,9 @@ jobs:
       - name: Build Neovim
         run: nix build .#nvim
 
+      - name: Materialize drv metadata
+        run: nix derivation show .#nvim > /tmp/nvim.drv.json
+
       - name: Bundle Neovim
         run: |
           rm -rf bundle
