@@ -39,7 +39,10 @@ jobs:
         run: |
           set -euo pipefail
           sudo mkdir -p /etc/nix
-          for line in "keep-outputs = true" "keep-derivations = true"; do
+          for line in \
+            "keep-outputs = true" \
+            "keep-derivations = true" \
+            "download-derivations = true"; do
             if ! grep -qF "$line" /etc/nix/nix.conf 2>/dev/null; then
               echo "$line" | sudo tee -a /etc/nix/nix.conf >/dev/null
             fi
