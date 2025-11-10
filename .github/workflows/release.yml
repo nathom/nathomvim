@@ -1,0 +1,91 @@
+name: Release Bundles
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  NIX_CONFIG: experimental-features = nix-command flakes
+
+jobs:
+  bundle:
+    name: Bundle ${{ matrix.pretty_name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pretty_name: Linux x86_64
+            runner: ubuntu-24.04
+            asset_suffix: linux-x86_64
+            artifact: bundle-linux-x86_64
+          - pretty_name: Linux aarch64
+            runner: ubuntu-24.04-arm
+            asset_suffix: linux-aarch64
+            artifact: bundle-linux-aarch64
+          - pretty_name: macOS aarch64
+            runner: macos-14
+            asset_suffix: darwin-aarch64
+            artifact: bundle-darwin-aarch64
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v12
+
+      - name: Enable Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v4
+
+      - name: Bundle Neovim
+        run: |
+          rm -rf bundle
+          nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .
+
+      - name: Package bundle
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          archive="nathomvim-${{ matrix.asset_suffix }}.tar.gz"
+          tar -czf "release/$archive" -C bundle .
+          shasum -a 256 "release/$archive" > "release/$archive.sha256"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            release/nathomvim-${{ matrix.asset_suffix }}.tar.gz
+            release/nathomvim-${{ matrix.asset_suffix }}.tar.gz.sha256
+
+  release:
+    name: Publish GitHub Release
+    needs: bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bundle-*
+          merge-multiple: true
+          path: release
+
+      - name: List release payload
+        run: ls -R release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: push-${{ github.run_id }}-${{ github.run_attempt }}
+          name: Push build ${{ github.run_number }} (#${{ github.run_attempt }})
+          target_commitish: ${{ github.sha }}
+          files: |
+            release/**/*.tar.gz
+            release/**/*.tar.gz.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

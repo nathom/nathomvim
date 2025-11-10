@@ -34,6 +34,7 @@
           ruff
           stylua
           lazygit
+          zsh
         ];
         kickstart-debug = [
           delve
