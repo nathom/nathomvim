@@ -74,11 +74,14 @@ jobs:
       - name: List release payload
         run: ls -R release
 
+      - name: Derive short commit hash
+        run: echo "SHORT_SHA=${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: push-${{ github.run_id }}-${{ github.run_attempt }}
-          name: Push build ${{ github.run_number }} (#${{ github.run_attempt }})
+          name: nathomvim-nightly-${{ env.SHORT_SHA }}
           target_commitish: ${{ github.sha }}
           files: |
             release/**/*.tar.gz
