@@ -58,7 +58,7 @@ jobs:
         run: nix build .#nvim
 
       - name: Materialize drv metadata
-        run: nix derivation show .#nvim > /tmp/nvim.drv.json
+        run: nix derivation show . > /tmp/default-package.drv.json
 
       - name: Bundle Neovim
         run: |
