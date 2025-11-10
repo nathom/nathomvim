@@ -10,8 +10,6 @@ permissions:
   contents: write
 
 env:
-  NP_RUNTIME: proot
-  NP_LOCATION: ${{ github.workspace }}/.nix-portable
   NIX_CONFIG: experimental-features = nix-command flakes
 
 jobs:
@@ -34,19 +32,25 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Download nix-portable
-        run: |
-          set -euo pipefail
-          curl -L https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m) -o nix-portable
-          chmod +x nix-portable
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v12
+        with:
+          extra-conf: |
+            keep-outputs = true
+            keep-derivations = true
+
+      - name: Enable Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v4
+        with:
+          use-flakehub: false
 
       - name: Build Neovim
-        run: ./nix-portable nix build .#nvim
+        run: nix build .#nvim
 
       - name: Bundle Neovim
         run: |
           rm -rf bundle
-          ./nix-portable nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .#nvim
+          nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .#nvim
 
       - name: Package bundle
         run: |
