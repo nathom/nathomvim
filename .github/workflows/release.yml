@@ -60,6 +60,9 @@ jobs:
       - name: Materialize drv metadata
         run: nix derivation show .#nvim > /tmp/nvim.drv.json
 
+      - name: Prefetch drv closure
+        run: nix copy --derivation $(nix path-info -r .#nvim)
+
       - name: Bundle Neovim
         run: |
           rm -rf bundle
