@@ -46,6 +46,7 @@ jobs:
       - name: Bundle Neovim
         run: |
           rm -rf bundle
+          nix build .
           nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .
 
       - name: Package bundle
