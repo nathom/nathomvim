@@ -37,6 +37,11 @@ jobs:
 
       - name: Enable Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
+        with:
+          use-flakehub: false
+
+      - name: Build Neovim
+        run: nix build .#nvim
 
       - name: Bundle Neovim
         run: |
