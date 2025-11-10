@@ -10,10 +10,7 @@ permissions:
   contents: write
 
 env:
-  NIX_CONFIG: |
-    experimental-features = nix-command flakes
-    keep-outputs = true
-    keep-derivations = true
+  NIX_CONFIG: experimental-features = nix-command flakes
 
 jobs:
   bundle:
@@ -37,6 +34,10 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v12
+        with:
+          extra-conf: |
+            keep-outputs = true
+            keep-derivations = true
 
       - name: Enable Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
