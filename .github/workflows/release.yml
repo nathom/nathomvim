@@ -61,7 +61,7 @@ jobs:
         run: nix derivation show .#nvim > /tmp/nvim.drv.json
 
       - name: Ensure base neovim drv exists
-        run: nix build nixpkgs#neovim
+        run: nix eval --raw nixpkgs#neovim.drvPath >/tmp/nixpkgs-neovim.drvpath
 
       - name: Bundle Neovim
         run: |
