@@ -24,16 +24,20 @@ jobs:
             runner: ubuntu-24.04
             asset_suffix: linux-x86_64
             artifact: bundle-linux-x86_64
+            nix_package_url: https://releases.nixos.org/nix/nix-2.18.1/nix-2.18.1-x86_64-linux.tar.xz
           - pretty_name: Linux aarch64
             runner: ubuntu-24.04-arm
             asset_suffix: linux-aarch64
             artifact: bundle-linux-aarch64
+            nix_package_url: https://releases.nixos.org/nix/nix-2.18.1/nix-2.18.1-aarch64-linux.tar.xz
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v12
+        with:
+          nix-package-url: ${{ matrix.nix_package_url }}
 
       - name: Ensure derivations stay available
         run: |
@@ -53,15 +57,6 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
         with:
           use-flakehub: false
-
-      - name: Build Neovim
-        run: nix build .#nvim
-
-      - name: Materialize drv metadata
-        run: nix derivation show .#nvim > /tmp/nvim.drv.json
-
-      - name: Ensure base neovim drv exists
-        run: nix eval --raw nixpkgs#neovim.drvPath >/tmp/nixpkgs-neovim.drvpath
 
       - name: Bundle Neovim
         run: |
