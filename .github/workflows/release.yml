@@ -9,9 +9,6 @@ on:
 permissions:
   contents: write
 
-env:
-  NIX_CONFIG: experimental-features = nix-command flakes
-
 jobs:
   bundle:
     name: Bundle ${{ matrix.pretty_name }}
@@ -32,25 +29,19 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v12
-        with:
-          extra-conf: |
-            keep-outputs = true
-            keep-derivations = true
-
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
-        with:
-          use-flakehub: false
+      - name: Download nix-portable
+        run: |
+          set -euo pipefail
+          curl -L https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m) -o nix-portable
+          chmod +x nix-portable
 
       - name: Build Neovim
-        run: nix build .#nvim
+        run: ./nix-portable nix build .#nvim
 
       - name: Bundle Neovim
         run: |
           rm -rf bundle
-          nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .#nvim
+          ./nix-portable nix bundle --bundler github:DavHau/nix-portable#zstd-max -o bundle .#nvim
 
       - name: Package bundle
         run: |
