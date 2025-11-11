@@ -181,6 +181,27 @@
         shellHook = ''
         '';
       };
+      non-nix-test = pkgs.mkShell {
+        name = "${defaultPackageName}-non-nix-test";
+        packages = with pkgs; [
+          git
+          unzip
+          curl
+        ];
+        shellHook = ''
+          export NVIM_APPNAME=${defaultPackageName}-non-nix
+          export NATHOMVIM_NON_NIX_SANDBOX="$PWD/.non-nix-sandbox"
+          rm -rf "$NATHOMVIM_NON_NIX_SANDBOX"
+          mkdir -p "$NATHOMVIM_NON_NIX_SANDBOX/config"
+          export XDG_CONFIG_HOME="$NATHOMVIM_NON_NIX_SANDBOX/config"
+          export TOOLS_DIR="$NATHOMVIM_NON_NIX_SANDBOX/tools"
+          mkdir -p "$TOOLS_DIR"
+          trap 'rm -rf "$NATHOMVIM_NON_NIX_SANDBOX"' EXIT
+          ln -snf "$PWD" "$XDG_CONFIG_HOME/$NVIM_APPNAME"
+          echo "[nathomvim] Non-Nix sandbox reset at $NATHOMVIM_NON_NIX_SANDBOX"
+          echo "[nathomvim] Run ./scripts/install.sh --appname $NVIM_APPNAME --skip-link inside this shell."
+        '';
+      };
     };
 
   }) // (let
