@@ -53,13 +53,6 @@ jobs:
           done
           sudo systemctl restart nix-daemon || true
 
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v4
-        with:
-          use-flakehub: false
-          flakehub-cache-server: ""
-          flakehub-api-server: ""
-
       - name: Bundle Neovim
         run: |
           rm -rf bundle
