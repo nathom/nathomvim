@@ -57,6 +57,8 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
         with:
           use-flakehub: false
+          flakehub-cache-server: ""
+          flakehub-api-server: ""
 
       - name: Bundle Neovim
         run: |
