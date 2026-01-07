@@ -2,7 +2,7 @@ local enable = require("nixCatsUtils").enableForCategory
 
 return {
   {
-    dir = "~/delphi.nvim",
+    "nathom/delphi.nvim",
     keys = {
       {
         "<leader>dd",
