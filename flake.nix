@@ -73,6 +73,7 @@
           todo-comments-nvim
           mini-nvim
           vimtex
+          tabular
           (nvim-treesitter.withPlugins (
             plugins: with plugins; [
               nix

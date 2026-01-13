@@ -13,6 +13,9 @@ return {
     enabled = enable("customCore", true),
   },
   {
+    "godlygeek/tabular",
+  },
+  {
     "ellisonleao/gruvbox.nvim",
     priority = 1000,
     lazy = false,

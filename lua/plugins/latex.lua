@@ -25,9 +25,19 @@ return {
       vim.g.tex_conceal = "abdmg"
     end,
     config = function()
-      -- vim.g.vimtex_compiler_method = "generic"
-      -- vim.g.vimtex_compiler_generic = {}
-      -- vim.cmd([[call vimtex#compiler#generic#init({'name': 'pdflatex', 'continuous': 0})]])
+      -- Hide LaTeX auxiliary files after successful compile (macOS)
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "VimtexEventCompileSuccess",
+        callback = function()
+          local dir = vim.fn.expand("%:p:h")
+          local exts = { "aux", "log", "fls", "fdb_latexmk", "synctex.gz", "out", "toc" }
+          for _, ext in ipairs(exts) do
+            for _, f in ipairs(vim.fn.glob(dir .. "/*." .. ext, false, true)) do
+              vim.fn.system({ "chflags", "hidden", f })
+            end
+          end
+        end,
+      })
     end,
     enabled = enable("customLatex", true),
   },
