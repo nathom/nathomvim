@@ -18,29 +18,30 @@
     categoryDefinitions = { pkgs, settings, categories, extra, name, mkPlugin, ... }@packageDef: {
       lspsAndRuntimeDeps = with pkgs; {
         general = [
-          universal-ctags
           ripgrep
           fd
           git
-          dwt1-shell-color-scripts
+          stylua
+          lazygit
+        ];
+        lsp = [
+          universal-ctags
           stdenv.cc.cc
           nix-doc
           lua-language-server
           rust-analyzer
-          bash
           pyright
-          tex-fmt
           nixd
           ruff
-          stylua
-          lazygit
-          zsh
+        ];
+        latex = [
+          tex-fmt
+        ];
+        dashboard = [
+          dwt1-shell-color-scripts
         ];
         kickstart-debug = [
           delve
-        ];
-        kickstart-lint = [
-          markdownlint-cli
         ];
       };
 
@@ -55,33 +56,35 @@
           which-key-nvim
           comment-nvim
           oil-nvim
-          gitsigns-nvim
           nvim-surround
           nvim-web-devicons
           plenary-nvim
+          vim-wordmotion
+          gruvbox-nvim
+          mini-nvim
+          nvim-treesitter
+        ];
+        kickstart-gitsigns = [
+          gitsigns-nvim
+        ];
+      };
+
+      optionalPlugins = with pkgs.vimPlugins; {
+        lsp = [
           nvim-lspconfig
           lazydev-nvim
           fidget-nvim
           conform-nvim
           nvim-cmp
           luasnip
-          vim-wordmotion
           cmp_luasnip
           cmp-nvim-lsp
           cmp-path
-          gruvbox-nvim
           todo-comments-nvim
-          mini-nvim
+        ];
+        latex = [
           vimtex
           tabular
-          (nvim-treesitter.withPlugins (
-            plugins: with plugins; [
-              nix
-              lua
-              python
-              rust
-            ]
-          ))
         ];
         kickstart-debug = [
           nvim-dap
@@ -93,8 +96,6 @@
           nvim-autopairs
         ];
       };
-
-      optionalPlugins = {};
 
       sharedLibraries = {
         general = with pkgs; [
@@ -122,39 +123,59 @@
       extraWrapperArgs = {
       };
 
-      python3.libraries = {
-        test = (_:[]);
-      };
-      extraLuaPackages = {
-        test = [ (_:[]) ];
-      };
+      python3.libraries = {};
+      extraLuaPackages = {};
     };
 
     packageDefinitions = {
+      # Full nvim with all features
       nvim = { pkgs, name, ... }: {
         settings = {
           suffix-path = true;
           suffix-LD = true;
           wrapRc = true;
           aliases = [ "vim" ];
-          hosts.python3.enable = true;
-          hosts.node.enable = true;
         };
         categories = {
           general = true;
-          gitPlugins = true;
-          customPlugins = true;
+          lsp = true;
+          latex = true;
+          dashboard = true;
+
           customCore = true;
           customNavigation = true;
           customLsp = true;
           customLatex = true;
           customAi = true;
-          test = false;
 
           kickstart-autopairs = true;
           kickstart-debug = true;
-          kickstart-lint = false;
+          kickstart-gitsigns = true;
 
+          have_nerd_font = true;
+        };
+      };
+      # Minimal nvim without LSP - fast startup
+      nvim-min = { pkgs, name, ... }: {
+        settings = {
+          suffix-path = true;
+          suffix-LD = true;
+          wrapRc = true;
+        };
+        categories = {
+          general = true;
+          lsp = false;
+          latex = false;
+          dashboard = false;
+
+          customCore = true;
+          customNavigation = true;
+          customLsp = false;
+          customLatex = false;
+          customAi = false;
+
+          kickstart-autopairs = true;
+          kickstart-debug = false;
           kickstart-gitsigns = true;
 
           have_nerd_font = true;

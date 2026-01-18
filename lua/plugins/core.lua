@@ -1,4 +1,5 @@
-local enable = require("nixCatsUtils").enableForCategory
+local nixcats_utils = require("nixCatsUtils")
+local enable = nixcats_utils.enableForCategory
 
 return {
   {
