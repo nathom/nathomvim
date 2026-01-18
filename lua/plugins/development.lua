@@ -25,6 +25,7 @@ return {
       {
         "folke/lazydev.nvim",
         ft = "lua",
+        enabled = enable("lang-lua", true),
         opts = {
           library = {
             { path = (nixCats.nixCatsPath or "") .. "/lua", words = { "nixCats" } },
@@ -81,32 +82,49 @@ return {
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
       vim.lsp.config("*", { capabilities = capabilities })
 
+      -- Build servers table based on enabled language categories
       local servers = {}
-      servers.hls = {
-        cmd = { "haskell-language-server-wrapper", "--lsp", "+RTS", "-M4G", "-RTS" },
-      }
-      servers.pyright = {}
-      servers.rust_analyzer = {}
 
-      if isNixCats then
-        servers.nixd = {}
-      else
-        servers.rnix = {}
-        servers.nil_ls = {}
-      end
-      servers.lua_ls = {
-        settings = {
-          Lua = {
-            completion = {
-              callSnippet = "Replace",
-            },
-            diagnostics = {
-              globals = { "nixCats" },
-              disable = { "missing-fields" },
+      if nixCats("lang-lua") then
+        servers.lua_ls = {
+          settings = {
+            Lua = {
+              completion = { callSnippet = "Replace" },
+              diagnostics = { globals = { "nixCats" }, disable = { "missing-fields" } },
             },
           },
-        },
-      }
+        }
+      end
+
+      if nixCats("lang-python") then
+        servers.pyright = {}
+      end
+
+      if nixCats("lang-rust") then
+        servers.rust_analyzer = {}
+      end
+
+      if nixCats("lang-nix") then
+        if isNixCats then
+          servers.nixd = {}
+        else
+          servers.nil_ls = {}
+        end
+      end
+
+      if nixCats("lang-go") then
+        servers.gopls = {}
+      end
+
+      if nixCats("lang-haskell") then
+        servers.hls = {
+          cmd = { "haskell-language-server-wrapper", "--lsp", "+RTS", "-M4G", "-RTS" },
+        }
+      end
+
+      if nixCats("lang-c") then
+        servers.clangd = {}
+      end
 
       if isNixCats then
         for server_name, cfg in pairs(servers) do
@@ -150,11 +168,10 @@ return {
         })
       end
     end,
-    ft = { "lua", "python", "rust", "haskell", "nix" },
   },
   {
     "stevearc/conform.nvim",
-    lazy = false,
+    event = "BufWritePre",
     enabled = enable("customLsp", true),
     keys = {
       {
@@ -166,21 +183,25 @@ return {
         desc = "[F]ormat buffer",
       },
     },
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        local disable_filetypes = { c = true, cpp = true, haskell = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
-        lua = { "stylua" },
-        python = { "ruff_format" },
-        tex = { "tex-fmt" },
-      },
-    },
+    opts = function()
+      local formatters = {}
+      if nixCats("lang-lua") then formatters.lua = { "stylua" } end
+      if nixCats("lang-python") then formatters.python = { "ruff_format" } end
+      if nixCats("latex") then formatters.tex = { "tex-fmt" } end
+      if nixCats("lang-go") then formatters.go = { "gofmt" } end
+
+      return {
+        notify_on_error = false,
+        format_on_save = function(bufnr)
+          local disable_filetypes = { c = true, cpp = true, haskell = true }
+          return {
+            timeout_ms = 500,
+            lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          }
+        end,
+        formatters_by_ft = formatters,
+      }
+    end,
   },
   {
     "L3MON4D3/LuaSnip",
@@ -255,29 +276,27 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     build = lazyAdd(":TSUpdate"),
-    opts = {
-      ensure_installed = lazyAdd({
-        "bash",
-        "c",
-        "diff",
-        "html",
-        "lua",
-        "luadoc",
-        "markdown",
-        "vim",
-        "vimdoc",
-      }),
-      auto_install = lazyAdd(true, false),
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { "ruby" },
-      },
-      indent = { enable = true, disable = { "ruby" } },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.install").prefer_git = true
-      require("nvim-treesitter").setup(opts)
+    config = function()
+      -- Build parser list based on enabled languages (non-nix only)
+      local parsers = { "bash", "diff", "markdown", "vim", "vimdoc" }
+      if not isNixCats then
+        if nixCats("lang-lua") then vim.list_extend(parsers, { "lua", "luadoc" }) end
+        if nixCats("lang-python") then table.insert(parsers, "python") end
+        if nixCats("lang-rust") then table.insert(parsers, "rust") end
+        if nixCats("lang-go") then table.insert(parsers, "go") end
+        if nixCats("lang-c") then vim.list_extend(parsers, { "c", "cpp" }) end
+        if nixCats("lang-nix") then table.insert(parsers, "nix") end
+        if nixCats("lang-haskell") then table.insert(parsers, "haskell") end
+        require("nvim-treesitter.install").prefer_git = true
+      end
+
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = lazyAdd(parsers),
+        auto_install = lazyAdd(true, false),
+        highlight = { enable = true },
+        indent = { enable = true },
+      })
     end,
-    enabled = enable("customLsp", true),
+    enabled = enable("customCore", true),
   },
 }

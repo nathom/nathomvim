@@ -1,8 +1,9 @@
 return {
   "mfussenegger/nvim-dap",
-  -- NOTE: nixCats: return true only if category is enabled, else false
-  enabled = require("nixCatsUtils").enableForCategory("kickstart-debug"),
-  ft = { "python" },
+  -- Only enabled if lang-python or lang-go (languages with debug support)
+  enabled = require("nixCatsUtils").enableForCategory("lang-python", false)
+    or require("nixCatsUtils").enableForCategory("lang-go", false),
+  ft = { "python", "go" },
   dependencies = {
     "rcarriga/nvim-dap-ui",
 

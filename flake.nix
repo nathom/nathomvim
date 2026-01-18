@@ -21,27 +21,43 @@
           ripgrep
           fd
           git
-          stylua
           lazygit
         ];
-        lsp = [
-          universal-ctags
-          stdenv.cc.cc
-          nix-doc
+        # Language-specific toolchains
+        lang-lua = [
           lua-language-server
-          rust-analyzer
+          stylua
+        ];
+        lang-python = [
           pyright
-          nixd
           ruff
         ];
+        lang-rust = [
+          rust-analyzer
+        ];
+        lang-nix = [
+          nixd
+          nix-doc
+        ];
+        lang-go = [
+          gopls
+          delve
+        ];
+        lang-haskell = [
+          haskell-language-server
+        ];
+        lang-c = [
+          clang-tools
+        ];
+        # Feature-specific
         latex = [
           tex-fmt
         ];
         dashboard = [
           dwt1-shell-color-scripts
         ];
-        kickstart-debug = [
-          delve
+        ctags = [
+          universal-ctags
         ];
       };
 
@@ -62,7 +78,32 @@
           vim-wordmotion
           gruvbox-nvim
           mini-nvim
-          nvim-treesitter
+          # Base treesitter with common parsers
+          (nvim-treesitter.withPlugins (p: [
+            p.bash p.markdown p.vim p.vimdoc p.diff
+          ]))
+        ];
+        # Language-specific treesitter parsers
+        lang-lua = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.lua p.luadoc ]))
+        ];
+        lang-python = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.python ]))
+        ];
+        lang-rust = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.rust p.toml ]))
+        ];
+        lang-nix = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.nix ]))
+        ];
+        lang-go = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.go p.gomod p.gosum ]))
+        ];
+        lang-haskell = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.haskell ]))
+        ];
+        lang-c = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (p: [ p.c p.cpp ]))
         ];
         kickstart-gitsigns = [
           gitsigns-nvim
@@ -70,9 +111,9 @@
       };
 
       optionalPlugins = with pkgs.vimPlugins; {
-        lsp = [
+        # Core LSP infrastructure (needed if any lang is enabled)
+        lsp-core = [
           nvim-lspconfig
-          lazydev-nvim
           fidget-nvim
           conform-nvim
           nvim-cmp
@@ -82,17 +123,27 @@
           cmp-path
           todo-comments-nvim
         ];
-        latex = [
-          vimtex
-          tabular
+        # Language-specific plugins
+        lang-lua = [
+          lazydev-nvim
         ];
-        kickstart-debug = [
+        lang-go = [
           nvim-dap
           nvim-dap-ui
           nvim-nio
           nvim-dap-virtual-text
         ];
-        kickstart-autopairs = [
+        lang-python = [
+          nvim-dap
+          nvim-dap-ui
+          nvim-nio
+          nvim-dap-virtual-text
+        ];
+        latex = [
+          vimtex
+          tabular
+        ];
+        autopairs = [
           nvim-autopairs
         ];
       };
@@ -127,59 +178,68 @@
       extraLuaPackages = {};
     };
 
-    packageDefinitions = {
-      # Full nvim with all features
-      nvim = { pkgs, name, ... }: {
-        settings = {
-          suffix-path = true;
-          suffix-LD = true;
-          wrapRc = true;
-          aliases = [ "vim" ];
-        };
-        categories = {
-          general = true;
-          lsp = true;
-          latex = true;
-          dashboard = true;
-
-          customCore = true;
-          customNavigation = true;
-          customLsp = true;
-          customLatex = true;
-          customAi = true;
-
-          kickstart-autopairs = true;
-          kickstart-debug = true;
-          kickstart-gitsigns = true;
-
-          have_nerd_font = true;
-        };
+    # Helper to create package with selected languages
+    mkNvimPackage = { langs ? [], extras ? {} }: { pkgs, name, ... }: {
+      settings = {
+        suffix-path = true;
+        suffix-LD = true;
+        wrapRc = true;
+        aliases = extras.aliases or [];
       };
-      # Minimal nvim without LSP - fast startup
-      nvim-min = { pkgs, name, ... }: {
-        settings = {
-          suffix-path = true;
-          suffix-LD = true;
-          wrapRc = true;
-        };
-        categories = {
-          general = true;
-          lsp = false;
-          latex = false;
-          dashboard = false;
+      categories = {
+        general = true;
+        dashboard = extras.dashboard or false;
+        latex = extras.latex or false;
+        ctags = extras.ctags or false;
+        autopairs = extras.autopairs or true;
+        kickstart-gitsigns = true;
 
-          customCore = true;
-          customNavigation = true;
-          customLsp = false;
-          customLatex = false;
-          customAi = false;
+        # LSP core enabled if any language is selected
+        lsp-core = (builtins.length langs) > 0;
 
-          kickstart-autopairs = true;
-          kickstart-debug = false;
-          kickstart-gitsigns = true;
+        # Language categories
+        lang-lua = builtins.elem "lua" langs;
+        lang-python = builtins.elem "python" langs;
+        lang-rust = builtins.elem "rust" langs;
+        lang-nix = builtins.elem "nix" langs;
+        lang-go = builtins.elem "go" langs;
+        lang-haskell = builtins.elem "haskell" langs;
+        lang-c = builtins.elem "c" langs;
 
-          have_nerd_font = true;
-        };
+        # Lua plugin categories
+        customCore = true;
+        customNavigation = true;
+        customLsp = (builtins.length langs) > 0;
+        customLatex = extras.latex or false;
+        customAi = extras.ai or false;
+
+        have_nerd_font = true;
+      };
+    };
+
+    packageDefinitions = {
+      # Full nvim with all languages (default)
+      nvim = mkNvimPackage {
+        langs = [ "lua" "python" "rust" "nix" "go" "haskell" ];
+        extras = { aliases = [ "vim" ]; dashboard = true; latex = true; ai = true; ctags = true; };
+      };
+
+      # Minimal - no LSP, fast startup
+      nvim-min = mkNvimPackage {
+        langs = [];
+        extras = {};
+      };
+
+      # Ari: Python + Go + Rust
+      ari = mkNvimPackage {
+        langs = [ "python" "go" "rust" ];
+        extras = { aliases = [ "vim" ]; dashboard = true; ai = true; };
+      };
+
+      # Anduril: Haskell + Python + Rust + Nix
+      anduril = mkNvimPackage {
+        langs = [ "haskell" "python" "rust" "nix" ];
+        extras = { aliases = [ "vim" ]; dashboard = true; ai = true; };
       };
     };
     defaultPackageName = "nvim";

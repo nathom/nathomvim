@@ -15,6 +15,8 @@ return {
   },
   {
     "godlygeek/tabular",
+    cmd = "Tabularize",
+    enabled = enable("customCore", true),
   },
   {
     "ellisonleao/gruvbox.nvim",
@@ -32,8 +34,8 @@ return {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
-    enabled = enable("customCore", true),
-    ft = { "python", "rust", "haskell", "lua" },
+    enabled = enable("customLsp", true),
+    event = "VeryLazy",
   },
   {
     "kylechui/nvim-surround",
@@ -109,9 +111,11 @@ return {
     priority = 1000,
     lazy = false,
     ---@type snacks.Config
-    opts = {
+    opts = function()
+      local dashboard_enabled = enable("dashboard", true)
+      return {
       bigfile = { enabled = true },
-      dashboard = {
+      dashboard = dashboard_enabled and {
         enabled = true,
         preset = {
           header = [[
@@ -147,7 +151,7 @@ return {
           },
           { section = "startup", icon = "" },
         },
-      },
+      } or { enabled = false },
       explorer = { enabled = false },
       indent = { enabled = true, animate = { enabled = false } },
       input = { enabled = true },
@@ -166,7 +170,8 @@ return {
           -- wo = { wrap = true } -- Wrap notifications
         },
       },
-    },
+    }
+    end,
     keys = {
       -- Top Pickers & Explorer
       {
@@ -196,13 +201,6 @@ return {
           Snacks.picker.command_history()
         end,
         desc = "Command History",
-      },
-      {
-        "<leader>n",
-        function()
-          Snacks.picker.notifications()
-        end,
-        desc = "Notification History",
       },
       {
         "<leader>e",
@@ -355,13 +353,6 @@ return {
           Snacks.picker.autocmds()
         end,
         desc = "Autocmds",
-      },
-      {
-        "<leader>sb",
-        function()
-          Snacks.picker.lines()
-        end,
-        desc = "Buffer Lines",
       },
       {
         "<leader>sc",

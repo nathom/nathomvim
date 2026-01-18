@@ -5,10 +5,9 @@
 |_| |_|\__,_|\__|_| |_|\___/|_| |_| |_|\_/ |_|_| |_| |_|
 --]]
 
--- Disable some built-in plugins we don't want
+-- Disable built-in plugins for faster startup
 local disabled_built_ins = {
   "gzip",
-  "man",
   "matchit",
   "matchparen",
   "tarPlugin",
@@ -17,7 +16,11 @@ local disabled_built_ins = {
   "zip",
   "netrwPlugin",
   "2html_plugin",
-  "remote_plugins",
+  "tutor",
+  "tohtml",
+  "spellfile",
+  "rplugin",
+  "editorconfig",
 }
 
 for _, plugin in ipairs(disabled_built_ins) do
