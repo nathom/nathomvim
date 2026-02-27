@@ -233,7 +233,7 @@
       # Ari: Python + Go + Rust + C/C++
       ari = mkNvimPackage {
         langs = [ "python" "go" "rust" "c" ];
-        extras = { aliases = [ "vim" ]; dashboard = true; ai = true; };
+        extras = { aliases = [ "vim" "nvim" ]; dashboard = true; ai = true; };
       };
 
       # Anduril: Haskell + Python + Rust + Nix
