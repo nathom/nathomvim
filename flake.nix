@@ -184,7 +184,7 @@
         suffix-path = true;
         suffix-LD = true;
         wrapRc = true;
-        aliases = extras.aliases or [];
+        aliases = [ "nvim" "nathomvim" ];
       };
       categories = {
         general = true;
@@ -221,7 +221,7 @@
       # Full nvim with all languages (default)
       nvim = mkNvimPackage {
         langs = [ "lua" "python" "rust" "nix" "go" "haskell" ];
-        extras = { aliases = [ "vim" ]; dashboard = true; latex = true; ai = true; ctags = true; };
+        extras = { dashboard = true; latex = true; ai = true; ctags = true; };
       };
 
       # Minimal - no LSP, fast startup
@@ -233,13 +233,13 @@
       # Ari: Python + Go + Rust + C/C++
       ari = mkNvimPackage {
         langs = [ "python" "go" "rust" "c" ];
-        extras = { aliases = [ "vim" "nvim" ]; dashboard = true; ai = true; };
+        extras = { dashboard = true; ai = true; };
       };
 
       # Anduril: Haskell + Python + Rust + Nix
       anduril = mkNvimPackage {
         langs = [ "haskell" "python" "rust" "nix" ];
-        extras = { aliases = [ "vim" ]; dashboard = true; ai = true; };
+        extras = { dashboard = true; ai = true; };
       };
     };
     defaultPackageName = "nvim";
