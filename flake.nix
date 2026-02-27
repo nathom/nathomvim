@@ -230,9 +230,9 @@
         extras = {};
       };
 
-      # Ari: Python + Go + Rust
+      # Ari: Python + Go + Rust + C/C++
       ari = mkNvimPackage {
-        langs = [ "python" "go" "rust" ];
+        langs = [ "python" "go" "rust" "c" ];
         extras = { aliases = [ "vim" ]; dashboard = true; ai = true; };
       };
 
