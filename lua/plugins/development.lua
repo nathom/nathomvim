@@ -123,7 +123,12 @@ return {
       end
 
       if nixCats("lang-c") then
-        servers.clangd = {}
+        servers.clangd = {
+          cmd = {
+            "clangd",
+            "--query-driver=/usr/bin/gcc,/usr/bin/g++,/usr/bin/cc,/usr/bin/c++",
+          },
+        }
       end
 
       if isNixCats then
