@@ -76,6 +76,15 @@ vim.opt.cursorline = true
 
 vim.opt.scrolloff = 10
 
+-- Auto-reload files when changed externally
+-- If there are unsaved changes, Neovim will prompt before reloading
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  desc = "Check if file changed externally and reload",
+  group = vim.api.nvim_create_augroup("checktime", { clear = true }),
+  command = "checktime",
+})
+
 -- [[ Basic Keymaps ]]
 
 vim.opt.hlsearch = true
