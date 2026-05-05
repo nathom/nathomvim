@@ -184,7 +184,7 @@
         suffix-path = true;
         suffix-LD = true;
         wrapRc = true;
-        aliases = [ "nvim" "nathomvim" ];
+        aliases = [ "nathomvim" ];
       };
       categories = {
         general = true;
