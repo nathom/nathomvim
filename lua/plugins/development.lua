@@ -7,6 +7,10 @@ return {
   {
     "neovim/nvim-lspconfig",
     enabled = enable("customLsp", true),
+    -- Defer LSP (and its fidget dep) until a real buffer is opened.
+    -- Dashboard launches don't open a buffer, so this skips the 5-10ms
+    -- LSP/fidget init for `nvim` with no args.
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       {
         "williamboman/mason.nvim",
@@ -281,6 +285,8 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     build = lazyAdd(":TSUpdate"),
+    -- Defer treesitter until a buffer is read — no need for parsers on dashboard.
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       -- Build parser list based on enabled languages (non-nix only)
       local parsers = { "bash", "diff", "markdown", "vim", "vimdoc" }
