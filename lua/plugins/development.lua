@@ -307,6 +307,24 @@ return {
         highlight = { enable = true },
         indent = { enable = true },
       })
+
+      -- nvim-treesitter lazy-loads on BufReadPre/BufNewFile, so the buffer
+      -- that triggers the load can finish drawing before the highlighter
+      -- attaches — a file opened straight from the picker then shows up
+      -- unhighlighted until you switch buffers and back. Re-fire FileType on
+      -- the already-open real buffers so highlighting (and LSP) attach and
+      -- repaint right away, for the first file of the session too.
+      vim.schedule(function()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if
+            vim.api.nvim_buf_is_loaded(buf)
+            and vim.bo[buf].buftype == ""
+            and vim.bo[buf].filetype ~= ""
+          then
+            vim.api.nvim_exec_autocmds("FileType", { buffer = buf, modeline = false })
+          end
+        end
+      end)
     end,
     enabled = enable("customCore", true),
   },
