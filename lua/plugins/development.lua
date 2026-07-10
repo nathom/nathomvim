@@ -285,8 +285,13 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     build = lazyAdd(":TSUpdate"),
-    -- Defer treesitter until a buffer is read — no need for parsers on dashboard.
-    event = { "BufReadPre", "BufNewFile" },
+    -- Load treesitter shortly after startup, not on the first file read. Loading
+    -- on BufReadPre meant the first file (e.g. opened from the picker) was drawn
+    -- before the highlighter's decoration provider attached, so it — and
+    -- treesitter injections like luadoc — rendered unhighlighted until a redraw.
+    -- VeryLazy fires after the dashboard is up and before you open anything, and
+    -- no parsers load until a real file is opened, so the dashboard stays instant.
+    event = "VeryLazy",
     config = function()
       -- Build parser list based on enabled languages (non-nix only)
       local parsers = { "bash", "diff", "markdown", "vim", "vimdoc" }
@@ -308,13 +313,12 @@ return {
         indent = { enable = true },
       })
 
-      -- nvim-treesitter lazy-loads on BufReadPre/BufNewFile, so the buffer
-      -- that triggers the load can finish drawing before the highlighter
-      -- attaches — a file opened straight from the picker then shows up
-      -- unhighlighted until you switch buffers and back. Re-fire FileType on
-      -- the already-open real buffers so highlighting (and LSP) attach and
-      -- repaint right away, for the first file of the session too.
+      -- Files opened on the command line (e.g. `nvim foo.lua`) are read before
+      -- VeryLazy fires, so they load without a treesitter highlighter. Re-fire
+      -- FileType on any already-open real buffers so highlighting (and LSP)
+      -- attach, then force a repaint so they show up highlighted right away.
       vim.schedule(function()
+        local refired = false
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
           if
             vim.api.nvim_buf_is_loaded(buf)
@@ -322,7 +326,15 @@ return {
             and vim.bo[buf].filetype ~= ""
           then
             vim.api.nvim_exec_autocmds("FileType", { buffer = buf, modeline = false })
+            refired = true
           end
+        end
+        -- Repaint on the next tick, after the re-fired highlighter has attached,
+        -- so the decoration provider re-parses the visible range and paints it.
+        if refired then
+          vim.schedule(function()
+            vim.cmd("redraw!")
+          end)
         end
       end)
     end,

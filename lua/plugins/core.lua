@@ -128,26 +128,18 @@ return {
         },
         sections = {
           { section = "header" },
+          -- Colored squares: pre-rendered ANSI art at assets/squares.txt.
+          -- `cat` is ~1ms vs the original `colorscript` (a Python fork that
+          -- isn't even installed here). Terminal-section still interprets
+          -- the ANSI escape codes so the colors render. ttl=1y means snacks
+          -- never re-runs the cmd in practice.
           {
             pane = 2,
             section = "terminal",
-            cmd = "colorscript -e square",
+            cmd = "cat " .. (vim.api.nvim_get_runtime_file("assets/squares.txt", false)[1] or "/dev/null"),
             height = 5,
             padding = 1,
-          },
-          {
-            pane = 2,
-            icon = " ",
-            title = "Git Status",
-            section = "terminal",
-            enabled = function()
-              return Snacks.git.get_root() ~= nil
-            end,
-            cmd = "git status --short --branch --renames",
-            height = 5,
-            padding = 1,
-            ttl = 5 * 60,
-            indent = 3,
+            ttl = 365 * 24 * 60 * 60,
           },
           { section = "startup", icon = "" },
         },
