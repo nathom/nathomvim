@@ -164,3 +164,5 @@ require("nixCatsUtils.lazyCat").setup(nixCats.pawsible({ "allPlugins", "start", 
   { import = "plugins.debug" },
   { import = "plugins.autopairs" },
 }, lazyOptions)
+
+require("github_pr").setup()

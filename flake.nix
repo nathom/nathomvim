@@ -21,6 +21,7 @@
           ripgrep
           fd
           git
+          gh
           lazygit
         ];
         # Language-specific toolchains

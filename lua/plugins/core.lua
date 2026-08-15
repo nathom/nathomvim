@@ -260,6 +260,13 @@ return {
         desc = "Git Log",
       },
       {
+        "<leader>gp",
+        function()
+          require("github_pr").pick()
+        end,
+        desc = "Checkout GitHub PR",
+      },
+      {
         "<leader>gL",
         function()
           Snacks.picker.git_log_line()
