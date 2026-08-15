@@ -37,6 +37,21 @@ local function fake_runner(expected, calls)
   end
 end
 
+local function fake_progress()
+  local events = {}
+  local progress = {}
+
+  function progress:update(stage, status, detail)
+    events[#events + 1] = table.concat({ stage, status, detail or "" }, ":")
+  end
+
+  function progress:finish(status, message, detail)
+    events[#events + 1] = table.concat({ "finish", status, message or "", detail or "" }, ":")
+  end
+
+  return progress, events
+end
+
 local function test(name, fn)
   local ok, err = xpcall(fn, debug.traceback)
   if not ok then
@@ -117,6 +132,7 @@ test("writes buffers, autostashes dirty state, then checks out the selected PR",
   local notifications = {}
   local checked_time = false
   local wrote_all = false
+  local progress, events = fake_progress()
   local run = fake_runner({
     {
       command = "git status --porcelain=v1 --untracked-files=all",
@@ -144,14 +160,68 @@ test("writes buffers, autostashes dirty state, then checks out the selected PR",
     notify = function(message, level)
       notifications[#notifications + 1] = { message = message, level = level }
     end,
-  })
+  }, progress)
 
   equal(wrote_all, true)
   equal(#calls, 3)
   equal(checked_time, true)
-  equal(#notifications, 1)
-  contains(notifications[1].message, "PR #42")
-  contains(notifications[1].message, "stashed")
+  equal(#notifications, 0)
+  contains(table.concat(events, "\n"), "save:active")
+  contains(table.concat(events, "\n"), "stash:success")
+  contains(table.concat(events, "\n"), "checkout:success")
+  contains(events[#events], "finish:success")
+  contains(events[#events], "stashed")
+end)
+
+test("falls back to a detached checkout when the PR branch is active in another worktree", function()
+  local calls = {}
+  local notifications = {}
+  local checked_time = false
+  local progress, events = fake_progress()
+  local run = fake_runner({
+    {
+      command = "git status --porcelain=v1 --untracked-files=all",
+      result = { code = 0, stdout = " M scripts/farisc.sh\n", stderr = "" },
+    },
+    {
+      command = "git stash push --include-untracked -m nvim: before checkout of PR #1093",
+      result = { code = 0, stdout = "Saved working directory and index state\n", stderr = "" },
+    },
+    {
+      command = "gh pr checkout 1093",
+      result = {
+        code = 1,
+        stdout = "",
+        stderr = "fatal: 'nathom/snapshot-manifest-dedupe' is already used by worktree at '/tmp/ari-snapshot-manifest-dedupe'\nfailed to run git: exit status 128\n",
+      },
+    },
+    {
+      command = "gh pr checkout 1093 --detach",
+      result = { code = 0, stdout = "HEAD is now at 3f25063 Speed up snapshot manifest validation\n", stderr = "" },
+    },
+  }, calls)
+
+  github_pr._checkout("/repo", { number = 1093 }, {
+    run = run,
+    write_all = function()
+      return true
+    end,
+    checktime = function()
+      checked_time = true
+    end,
+    notify = function(message, level)
+      notifications[#notifications + 1] = { message = message, level = level }
+    end,
+  }, progress)
+
+  equal(#calls, 4)
+  equal(checked_time, true)
+  equal(#notifications, 0)
+  contains(table.concat(events, "\n"), "checkout:warning")
+  contains(table.concat(events, "\n"), "detached:active")
+  contains(table.concat(events, "\n"), "detached:success")
+  contains(events[#events], "finish:success")
+  contains(events[#events], "detached")
 end)
 
 test("restores the autostash when gh checkout fails", function()
