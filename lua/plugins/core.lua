@@ -91,6 +91,8 @@ return {
         { "<leader>d_", hidden = true },
         { "<leader>r", group = "[R]ename" },
         { "<leader>r_", hidden = true },
+        { "<leader>p", group = "[P]ull request" },
+        { "<leader>p_", hidden = true },
         { "<leader>s", group = "[S]earch" },
         { "<leader>s_", hidden = true },
         { "<leader>t", group = "[T]oggle" },

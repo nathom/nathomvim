@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    octo-nvim = {
+      url = "github:pwntester/octo.nvim";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, nixCats, ... }@inputs: let
@@ -112,6 +116,22 @@
       };
 
       optionalPlugins = with pkgs.vimPlugins; {
+        general = [
+          (pkgs.vimUtils.buildVimPlugin {
+            pname = "octo.nvim";
+            version = inputs.octo-nvim.shortRev or "unstable";
+            src = inputs.octo-nvim;
+            dependencies = with pkgs.vimPlugins; [
+              plenary-nvim
+              snacks-nvim
+            ];
+            nvimRequireCheck = [
+              "octo"
+              "octo.config"
+              "octo.pickers.snacks.provider"
+            ];
+          })
+        ];
         # Core LSP infrastructure (needed if any lang is enabled)
         lsp-core = [
           nvim-lspconfig
