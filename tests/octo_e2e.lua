@@ -8,6 +8,8 @@ require("lazy").load({ plugins = { "octo.nvim" } })
 
 check(vim.fn.exists(":Octo") == 2, "Octo command was not registered")
 check(vim.fn.maparg("<leader>pp", "n") ~= "", "<leader>pp was not registered")
+check(vim.fn.maparg("<leader>ps", "n") ~= "", "smart start/resume mapping was not registered")
+check(vim.fn.maparg("<leader>pS", "n") ~= "", "global review submit mapping was not registered")
 
 local config = require("octo.config").values
 check(config.picker == "snacks", "Octo is not using the Snacks picker")

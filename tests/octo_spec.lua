@@ -41,10 +41,8 @@ end)
 test("uses a logical leader-only review workflow", function()
   local opts = octo_review.opts()
   equal(opts.mappings_disable_default, true)
-  equal(mapping(opts, "pull_request", "review_start"), "<leader>ps")
-  equal(mapping(opts, "pull_request", "review_resume"), "<leader>pr")
   equal(mapping(opts, "review_diff", "add_review_comment"), "<leader>pc")
-  equal(mapping(opts, "review_diff", "add_review_suggestion"), "<leader>ps")
+  equal(mapping(opts, "review_diff", "add_review_suggestion"), "<leader>pg")
   equal(mapping(opts, "review_diff", "submit_review"), "<leader>pS")
   equal(mapping(opts, "submit_win", "approve_review"), "<leader>pa")
   equal(mapping(opts, "submit_win", "comment_review"), "<leader>pc")
@@ -79,11 +77,15 @@ test("registers pull-request leader entry points", function()
   local keys = octo_review.keys()
   local found = {}
   for _, key in ipairs(keys) do
-    found[key[1]] = key.desc
+    found[key[1]] = { rhs = key[2], desc = key.desc }
   end
-  equal(found["<leader>pp"], "Pull requests")
-  equal(found["<leader>pn"], "GitHub notifications")
-  equal(found["<leader>pa"], "Octo actions")
+  equal(found["<leader>pp"].desc, "Pull requests")
+  equal(found["<leader>pn"].desc, "GitHub notifications")
+  equal(found["<leader>pa"].desc, "Octo actions")
+  equal(found["<leader>ps"].rhs, "<cmd>Octo review<cr>")
+  equal(found["<leader>ps"].desc, "Start or resume review")
+  equal(found["<leader>pS"].rhs, "<cmd>Octo review submit<cr>")
+  equal(found["<leader>pS"].desc, "Submit review")
 end)
 
 io.stdout:write("all Octo configuration tests passed\n")

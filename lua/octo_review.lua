@@ -83,8 +83,6 @@ function M.opts()
         delete_comment = map("<leader>pD", "Delete comment"),
         next_comment = map("]c", "Next comment"),
         prev_comment = map("[c", "Previous comment"),
-        review_start = map("<leader>ps", "Start review"),
-        review_resume = map("<leader>pr", "Resume review"),
         resolve_thread = map("<leader>pt", "Resolve thread"),
         unresolve_thread = map("<leader>pT", "Unresolve thread"),
       },
@@ -92,7 +90,7 @@ function M.opts()
         submit_review = map("<leader>pS", "Submit review"),
         discard_review = map("<leader>pD", "Discard review"),
         add_review_comment = map("<leader>pc", "Add review comment", { "n", "x" }),
-        add_review_suggestion = map("<leader>ps", "Add review suggestion", { "n", "x" }),
+        add_review_suggestion = map("<leader>pg", "Add review suggestion", { "n", "x" }),
         focus_files = map("<leader>pe", "Focus changed files"),
         toggle_files = map("<leader>pE", "Toggle changed files"),
         next_thread = map("]t", "Next review thread"),
@@ -111,7 +109,7 @@ function M.opts()
       },
       review_thread = {
         add_reply = map("<leader>pc", "Reply to thread"),
-        add_suggestion = map("<leader>ps", "Add suggestion"),
+        add_suggestion = map("<leader>pg", "Add suggestion"),
         delete_comment = map("<leader>pD", "Delete comment"),
         next_comment = map("]c", "Next comment"),
         prev_comment = map("[c", "Previous comment"),
@@ -160,6 +158,8 @@ function M.keys()
     { "<leader>pn", "<cmd>Octo notification list<cr>", desc = "GitHub notifications" },
     { "<leader>po", "<cmd>Octo<cr>", desc = "Octo command palette" },
     { "<leader>pa", "<cmd>Octo actions<cr>", desc = "Octo actions" },
+    { "<leader>ps", "<cmd>Octo review<cr>", desc = "Start or resume review" },
+    { "<leader>pS", "<cmd>Octo review submit<cr>", desc = "Submit review" },
   }
 end
 
