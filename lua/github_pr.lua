@@ -53,6 +53,8 @@ function M._items(pages)
       local title = tostring(pr.title or ""):gsub("%s+", " ")
       items[#items + 1] = {
         number = pr.number,
+        title = title,
+        branch = branch,
         text = ("#%d  %s  @%s  %s"):format(pr.number, title, author, branch),
       }
     end
@@ -89,60 +91,123 @@ function M._list(root, overrides, callback)
   )
 end
 
-function M._checkout(root, pr, overrides)
+function M._checkout(root, pr, overrides, progress)
   local deps = overrides or defaults()
-  local wrote, write_error = deps.write_all()
-  if not wrote then
-    deps.notify("Failed to save modified buffers: " .. tostring(write_error), "error")
-    return
+
+  local function update(stage, status, detail)
+    if progress then
+      progress:update(stage, status, detail)
+    end
+  end
+
+  local function finish(status, message, detail)
+    if progress then
+      progress:finish(status, message, detail)
+      return
+    end
+    local suffix = detail and detail ~= "" and (": " .. detail) or ""
+    deps.notify(message .. suffix, status == "success" and "info" or "error")
+  end
+
+  local function is_worktree_conflict(message)
+    return message:find("already used by worktree", 1, true) or message:find("already checked out at", 1, true)
+  end
+
+  local function complete(stashed, detached)
+    update("reload", "active")
+    local refreshed, refresh_error = pcall(deps.checktime)
+    update("reload", refreshed and "success" or "warning", refreshed and nil or refresh_error)
+    local message = ("Checked out PR #%d%s"):format(pr.number, detached and " detached" or "")
+    local detail = stashed and "Previous working changes are safely stashed at stash@{0}" or "Working tree was clean"
+    finish("success", message, detail)
+  end
+
+  local function fail_checkout(stashed, checkout_error)
+    if not stashed then
+      finish("error", ("Could not checkout PR #%d"):format(pr.number), checkout_error)
+      return
+    end
+
+    update("restore", "active")
+    deps.run({ "git", "stash", "pop", "--index", "stash@{0}" }, root, function(restore_result)
+      if restore_result.code == 0 then
+        update("restore", "success")
+        finish(
+          "error",
+          ("Could not checkout PR #%d"):format(pr.number),
+          checkout_error .. "; autostashed changes were restored"
+        )
+        return
+      end
+
+      local restore_error = command_error(restore_result)
+      update("restore", "error", restore_error)
+      finish(
+        "error",
+        ("Could not checkout PR #%d"):format(pr.number),
+        checkout_error .. "; stash@{0} was kept because restore failed: " .. restore_error
+      )
+    end)
   end
 
   local function checkout(stashed)
+    update("checkout", "active")
     deps.run({ "gh", "pr", "checkout", tostring(pr.number) }, root, function(result)
       if result.code == 0 then
-        deps.checktime()
-        local suffix = stashed and "; previous working changes are stashed at stash@{0}" or ""
-        deps.notify(("Checked out PR #%d%s"):format(pr.number, suffix), "info")
+        update("checkout", "success")
+        complete(stashed, false)
         return
       end
 
       local checkout_error = command_error(result)
-      if not stashed then
-        deps.notify(("Failed to checkout PR #%d: %s"):format(pr.number, checkout_error), "error")
+      if is_worktree_conflict(checkout_error) then
+        update("checkout", "warning", "Branch is active in another worktree")
+        update("detached", "active")
+        deps.run({ "gh", "pr", "checkout", tostring(pr.number), "--detach" }, root, function(detached_result)
+          if detached_result.code == 0 then
+            update("detached", "success")
+            complete(stashed, true)
+            return
+          end
+          local detached_error = command_error(detached_result)
+          update("detached", "error", detached_error)
+          fail_checkout(stashed, detached_error)
+        end)
         return
       end
 
-      deps.run({ "git", "stash", "pop", "--index", "stash@{0}" }, root, function(restore_result)
-        if restore_result.code == 0 then
-          deps.notify(
-            ("Failed to checkout PR #%d: %s; autostashed changes were restored"):format(pr.number, checkout_error),
-            "error"
-          )
-        else
-          deps.notify(
-            ("Failed to checkout PR #%d: %s; autostash remains at stash@{0} because restore failed: %s"):format(
-              pr.number,
-              checkout_error,
-              command_error(restore_result)
-            ),
-            "error"
-          )
-        end
-      end)
+      update("checkout", "error", checkout_error)
+      fail_checkout(stashed, checkout_error)
     end)
   end
 
+  update("save", "active")
+  local wrote, write_error = deps.write_all()
+  if not wrote then
+    update("save", "error", write_error)
+    finish("error", "Could not save modified buffers", write_error)
+    return
+  end
+  update("save", "success")
+
+  update("inspect", "active")
   deps.run({ "git", "status", "--porcelain=v1", "--untracked-files=all" }, root, function(result)
     if result.code ~= 0 then
-      deps.notify("Failed to inspect working changes: " .. command_error(result), "error")
+      local inspect_error = command_error(result)
+      update("inspect", "error", inspect_error)
+      finish("error", "Could not inspect working changes", inspect_error)
       return
     end
 
     if trim(result.stdout) == "" then
+      update("inspect", "success", "Clean")
+      update("stash", "skipped", "Nothing to stash")
       checkout(false)
       return
     end
 
+    update("inspect", "success", "Local changes found")
+    update("stash", "active")
     deps.run(
       {
         "git",
@@ -155,9 +220,12 @@ function M._checkout(root, pr, overrides)
       root,
       function(stash_result)
         if stash_result.code ~= 0 then
-          deps.notify("Failed to autostash working changes: " .. command_error(stash_result), "error")
+          local stash_error = command_error(stash_result)
+          update("stash", "error", stash_error)
+          finish("error", "Could not stash working changes", stash_error)
           return
         end
+        update("stash", "success", "stash@{0}")
         checkout(true)
       end
     )
@@ -189,7 +257,10 @@ function M.pick()
         confirm = function(picker, item)
           picker:close()
           if item then
-            M._checkout(root, item, deps)
+            vim.schedule(function()
+              local progress = require("github_pr_progress").new(item)
+              M._checkout(root, item, deps, progress)
+            end)
           end
         end,
       })
